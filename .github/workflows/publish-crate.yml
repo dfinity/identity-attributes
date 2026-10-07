@@ -1,0 +1,23 @@
+name: publish on crates.io
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - rust-v*.*.*
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    environment: release
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      # `CARGO_REGISTRY_TOKEN` is scoped to the `release` environment; see
+      # Settings → Environments.
+      - run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

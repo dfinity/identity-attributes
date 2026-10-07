@@ -48,7 +48,7 @@ persistent actor {
     };
   });
 
-  public query func getProfile(caller : Principal) : async ?Profile {
+  public shared query ({ caller }) func getProfile() : async ?Profile {
     profiles.get(caller)
   };
 };

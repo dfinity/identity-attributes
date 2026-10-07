@@ -1,0 +1,22 @@
+[package]
+name = "identity-attributes"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Verify Internet Identity attribute bundles (name, email, SSO domain) in a Rust canister."
+license = "Apache-2.0"
+repository = "https://github.com/dfinity/identity-attributes"
+keywords = ["internet-computer", "internet-identity", "attributes", "icrc-3", "icp"]
+categories = ["api-bindings", "wasm"]
+
+[dependencies]
+candid = "0.10"
+ic-cdk = "0.20"
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+hex = "0.4"
+serde_json = "1"
+
+[workspace]
+members = ["examples/profile"]

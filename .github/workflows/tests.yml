@@ -7,8 +7,33 @@ on:
   pull_request:
 
 jobs:
-  test:
+  rust:
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+      - run: cargo test --all-features
+      - name: Build the example canister
+        run: cargo build --release --target wasm32-unknown-unknown -p profile-example
+      - name: Check the example's candid is current
+        run: cargo test -p profile-example candid_is_up_to_date
+
+  motoko:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: motoko
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
@@ -18,8 +43,11 @@ jobs:
       - run: mops install
       - run: mops test
 
-  format:
+  motoko-format:
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: motoko
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4

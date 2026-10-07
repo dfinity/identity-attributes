@@ -2,6 +2,8 @@
 
 ## Next
 
+- The repository is now `dfinity/identity-attributes`, with this package in `motoko/`. Releases are tagged `motoko-vX.Y.Z`. No code or API changes.
+
 ## 0.4.1
 
 - Documentation only: rewrote the README (clearer usage, a concrete `@icp-sdk/auth` v7 frontend example, and an attribute-key reference) and simplified the mixin doc comment. No code or API changes.

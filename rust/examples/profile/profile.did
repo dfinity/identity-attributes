@@ -1,0 +1,53 @@
+// Why `_internet_identity_sign_in_finish` refused a bundle. The Candid type
+// is the Motoko package's, so one frontend works with either backend.
+type Error = variant {
+  // The `frontend_origins` environment variable is unset or empty.
+  FrontendOriginsNotConfigured;
+  // The bundle mixes `sso:` keys with unscoped or OpenID keys for name or
+  // email.
+  MixedSsoSources : record { otherKeys : vec text; ssoKeys : vec text };
+  // `implicit:issued_at_timestamp_ns` is older than five minutes. The
+  // frontend fetches a fresh nonce and tries again.
+  Stale : record { ageNs : nat };
+  // The bundle is not a Candid-encoded ICRC-3 `Value::Map`.
+  MalformedCandid;
+  // `name`, `email`, or `sso` (SSO keys from two domains) comes from more
+  // than one key.
+  AmbiguousAttribute : record { field : text; sources : vec text };
+  // No bundle is attached to the call: the frontend did not wrap its
+  // identity in an `AttributesIdentity`.
+  NoAttributes;
+  // The nonce was not issued by this canister, was already consumed, or
+  // expired.
+  UnknownNonce;
+  // The bundle has an `sso:<domain>:*` key for a domain not listed in
+  // `trusted_sso_domains`. The whole bundle is refused.
+  UntrustedSsoSource : record { domain : text };
+  // A required implicit field is missing.
+  MissingField : text;
+  // `implicit:origin` is not one of `frontend_origins`.
+  FrontendOriginMismatch : record { got : text; expected : vec text };
+};
+// What `on_verified` receives for a verified bundle.
+// 
+// `name` and `email` each come from at most one key in the bundle. `sso` is
+// the trusted SSO domain when they came from `sso:<domain>:*` keys, and
+// `None` otherwise.
+// 
+// For unscoped and OpenID sources, `email` comes only from a
+// `verified_email` key; the unverified `email` key never lands here. For an
+// SSO source it comes from `sso:<domain>:email`, which the organization's
+// identity provider asserts, and its own domain may be anything.
+type IdentityAttributes = record {
+  sso : opt text;
+  name : opt text;
+  email : opt text;
+};
+// What `_internet_identity_sign_in_finish` returns: Candid
+// `variant { ok; err : Error }`, like the Motoko package's `Result`.
+type SignInResult = variant { ok; err : Error };
+service : {
+  _internet_identity_sign_in_finish : () -> (SignInResult);
+  _internet_identity_sign_in_start : () -> (blob);
+  get_profile : () -> (opt IdentityAttributes) query;
+}

@@ -1,4 +1,4 @@
-# Contributing to motoko-identity-attributes
+# Contributing to identity-attributes
 
 Thank you for your interest in contributing ❤️
 
@@ -16,12 +16,25 @@ External contributions are accepted under the DFINITY [CLA](https://github.com/d
 ## Development
 
 ```
+cd motoko
 mops install
 mops test
+npm install && npm run format:check
+
+cd ../rust
+cargo test --workspace
+cargo clippy --all-targets -- -D warnings
+cargo build --release --target wasm32-unknown-unknown -p profile-example
 ```
+
+The two libraries are meant to stay in step: a change to how either behaves
+belongs in both, with the same test on each side. Both answer the frontend
+with the same Candid types; `rust/examples/profile/profile.did` is generated
+(`BLESS=1 cargo test -p profile-example`), so a change to the Rust types shows
+up there.
 
 For the release process, see [Releasing.md](Releasing.md).
 
 ## Bug reports
 
-We really appreciate bug reports through [GitHub Issues](https://github.com/dfinity/motoko-identity-attributes/issues/new).
+We really appreciate bug reports through [GitHub Issues](https://github.com/dfinity/identity-attributes/issues/new).
