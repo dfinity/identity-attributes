@@ -49,5 +49,5 @@ type SignInResult = variant { ok; err : Error };
 service : {
   _internet_identity_sign_in_finish : () -> (SignInResult);
   _internet_identity_sign_in_start : () -> (blob);
-  get_profile : () -> (opt IdentityAttributes) query;
+  get_profile : (principal) -> (opt IdentityAttributes) query;
 }

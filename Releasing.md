@@ -13,7 +13,7 @@ The two packages version and publish independently, each from its own tag:
 
    ```
    git tag motoko-vX.Y.Z   # or rust-vX.Y.Z
-   git push origin motoko-vX.Y.Z
+   git push origin motoko-vX.Y.Z   # or rust-vX.Y.Z
    ```
 
 6. Check the publish workflow run to confirm it succeeded.

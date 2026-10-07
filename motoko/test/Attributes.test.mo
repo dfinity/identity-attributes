@@ -199,5 +199,14 @@ do {
     case _ Runtime.trap("expected #UntrustedSsoSource when no domains trusted")
   };
 
+  // ---- Case 16: an untrusted SSO key rejects the bundle whatever its value ----
+
+  let untrustedNat = Attributes.Attributes([("sso:evil.com:name", #Nat 1)]);
+
+  switch (Attributes.asIdentityAttributes(untrustedNat, ["dfinity.org"])) {
+    case (#err(#UntrustedSsoSource { domain })) assert domain == "evil.com";
+    case _ Runtime.trap("expected #UntrustedSsoSource for a non-text value")
+  };
+
   Debug.print("Attributes.test.mo ok")
 }

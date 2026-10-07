@@ -106,13 +106,16 @@ pub(crate) fn as_identity_attributes(
     let mut sso_emails = Vec::new();
 
     for (key, value) in &attributes.0 {
-        let (Some((domain, suffix)), Value::Text(value)) = (parse_sso_key(key), value) else {
+        let Some((domain, suffix)) = parse_sso_key(key) else {
             continue;
         };
         if !trusted_sso_domains.iter().any(|d| d == domain) {
             untrusted_domain.get_or_insert_with(|| domain.to_string());
             continue;
         }
+        let Value::Text(value) = value else {
+            continue;
+        };
         let source = SsoSource {
             domain: domain.to_string(),
             key: key.clone(),
@@ -339,6 +342,20 @@ mod tests {
             ("sso:evil.com:name", "Mallory"),
             ("sso:evil.com:email", "m@evil.com"),
         ]);
+        assert_eq!(
+            as_identity_attributes(&attributes, &trusted(&["dfinity.org"])),
+            Err(Error::UntrustedSsoSource {
+                domain: "evil.com".into()
+            })
+        );
+    }
+
+    #[test]
+    fn an_untrusted_sso_key_refuses_the_bundle_whatever_its_value() {
+        let attributes = Attributes(vec![(
+            "sso:evil.com:name".to_string(),
+            Value::Nat(candid::Nat::from(1u64)),
+        )]);
         assert_eq!(
             as_identity_attributes(&attributes, &trusted(&["dfinity.org"])),
             Err(Error::UntrustedSsoSource {

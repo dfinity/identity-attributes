@@ -2,7 +2,8 @@
 
 ## Next
 
-- The repository is now `dfinity/identity-attributes`, with this package in `motoko/`. Releases are tagged `motoko-vX.Y.Z`. No code or API changes.
+- The repository is now `dfinity/identity-attributes`, with this package in `motoko/`. Releases are tagged `motoko-vX.Y.Z`.
+- An `sso:<domain>:*` key from an untrusted domain now rejects the bundle with `#UntrustedSsoSource` whatever its value's type, not only for a text value.
 
 ## 0.4.1
 

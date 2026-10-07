@@ -1,7 +1,6 @@
 //! A canister that keeps each user's verified name and email.
 
 use candid::Principal;
-use ic_cdk::api::msg_caller;
 use ic_cdk::query;
 use identity_attributes::IdentityAttributes;
 use std::cell::RefCell;
@@ -17,8 +16,8 @@ identity_attributes::endpoints!(|caller: Principal, attributes: IdentityAttribut
 });
 
 #[query]
-fn get_profile() -> Option<IdentityAttributes> {
-    PROFILES.with_borrow(|profiles| profiles.get(&msg_caller()).cloned())
+fn get_profile(caller: Principal) -> Option<IdentityAttributes> {
+    PROFILES.with_borrow(|profiles| profiles.get(&caller).cloned())
 }
 
 ic_cdk::export_candid!();
