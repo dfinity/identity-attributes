@@ -18,6 +18,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       # `CARGO_REGISTRY_TOKEN` is scoped to the `release` environment; see
       # Settings → Environments.
-      - run: cargo publish
+      # The macros first: `identity-attributes` depends on them by exact version.
+      - run: cargo publish -p identity-attributes-macros
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - run: cargo publish -p identity-attributes
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

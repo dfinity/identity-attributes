@@ -22,7 +22,7 @@ mops test
 npm install && npm run format:check
 
 cd ../rust
-cargo test --workspace
+cargo test --workspace   # the crate, its #[identity_attributes] macro in macros/, and the example
 cargo clippy --all-targets -- -D warnings
 cargo build --release --target wasm32-unknown-unknown -p profile-example
 ```
