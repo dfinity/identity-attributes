@@ -1,15 +1,17 @@
 //! Verify Internet Identity attribute bundles in a Rust canister.
 //!
-//! [`endpoints!`] adds the two methods the frontend calls, and runs your
-//! function with the caller and their verified `{ name, email, sso }`:
+//! [`identity_attributes`] marks the function that receives the caller and
+//! their verified `{ name, email, sso }`, and adds the two methods the frontend
+//! calls:
 //!
 //! ```ignore
 //! use candid::Principal;
-//! use identity_attributes::IdentityAttributes;
+//! use identity_attributes::{identity_attributes, IdentityAttributes};
 //!
-//! identity_attributes::endpoints!(|caller: Principal, attributes: IdentityAttributes| {
+//! #[identity_attributes]
+//! fn consume_attributes(caller: Principal, attributes: IdentityAttributes) {
 //!     // store `attributes` for `caller` however the app needs
-//! });
+//! }
 //! ```
 //!
 //! Configured by environment variables: `trusted_attribute_signers` and
@@ -25,6 +27,7 @@ use ic_cdk::api::{
     time,
 };
 use ic_cdk::call::Call;
+pub use identity_attributes_macros::identity_attributes;
 use internal::challenges::Challenges;
 use internal::verify::{self, Config};
 use std::cell::RefCell;
@@ -35,29 +38,6 @@ thread_local! {
     /// fails with `UnknownNonce` and starts again; a nonce lives five minutes,
     /// so nothing older was redeemable anyway.
     static CHALLENGES: RefCell<Challenges> = RefCell::new(Challenges::default());
-}
-
-/// Adds `_internet_identity_sign_in_start` and `_internet_identity_sign_in_finish`
-/// to the canister. `on_verified` is called with the caller and their
-/// [`IdentityAttributes`] for every bundle that passes verification.
-#[macro_export]
-macro_rules! endpoints {
-    ($on_verified:expr) => {
-        // Imported rather than named in the signature, and `ic_cdk` left
-        // unqualified, because `ic_cdk::export_candid!` re-parses these
-        // signatures and does not accept the leading `::` of `$crate`.
-        use $crate::SignInResult as IiSignInResult;
-
-        #[ic_cdk::update]
-        async fn _internet_identity_sign_in_start() -> Vec<u8> {
-            $crate::sign_in_start().await
-        }
-
-        #[ic_cdk::update]
-        fn _internet_identity_sign_in_finish() -> IiSignInResult {
-            $crate::sign_in_finish($on_verified)
-        }
-    };
 }
 
 /// Issues a single-use nonce for the frontend to put in its attribute

@@ -17,9 +17,10 @@ include IdentityAttributes({
 Rust:
 
 ```rust
-identity_attributes::endpoints!(|caller: Principal, attributes: IdentityAttributes| {
+#[identity_attributes]
+fn consume_attributes(caller: Principal, attributes: IdentityAttributes) {
     PROFILES.with_borrow_mut(|profiles| profiles.insert(caller, attributes));
-});
+}
 ```
 
 - **[motoko/](motoko/README.md)**: the Mops package, for a Motoko canister.

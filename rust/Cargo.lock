@@ -325,8 +325,18 @@ dependencies = [
  "candid",
  "hex",
  "ic-cdk",
+ "identity-attributes-macros",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "identity-attributes-macros"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]

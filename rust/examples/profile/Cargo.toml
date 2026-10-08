@@ -9,5 +9,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 candid = "0.10"
-ic-cdk = "0.20"
+ic-cdk = "0.20.1"
 identity-attributes = { path = "../.." }

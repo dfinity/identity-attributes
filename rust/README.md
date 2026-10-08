@@ -9,7 +9,7 @@ Motoko, and both answer the frontend with the same Candid types.
 ```toml
 [dependencies]
 candid = "0.10"
-ic-cdk = "0.20"
+ic-cdk = "0.20.1"
 identity-attributes = "0.1"
 ```
 
@@ -27,14 +27,15 @@ canisters:
 
 ## Backend
 
-`endpoints!` adds the two sign-in methods the frontend calls, and runs your
-function with the caller and their verified attributes. What it does with them
+`#[identity_attributes]` marks the function that receives the caller and
+their verified attributes, and adds the two sign-in methods the frontend
+calls. What it does with them
 is yours to decide; this one keeps a profile per principal:
 
 ```rust
 use candid::Principal;
 use ic_cdk::query;
-use identity_attributes::IdentityAttributes;
+use identity_attributes::{identity_attributes, IdentityAttributes};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
@@ -44,9 +45,10 @@ thread_local! {
         const { RefCell::new(BTreeMap::new()) };
 }
 
-identity_attributes::endpoints!(|caller: Principal, attributes: IdentityAttributes| {
+#[identity_attributes]
+fn consume_attributes(caller: Principal, attributes: IdentityAttributes) {
     PROFILES.with_borrow_mut(|profiles| profiles.insert(caller, attributes));
-});
+}
 
 #[query]
 fn get_profile(user_id: Principal) -> Option<IdentityAttributes> {
@@ -69,7 +71,8 @@ The same as for the Motoko package: fetch a nonce from
 ## API
 
 ```rust
-identity_attributes::endpoints!(on_verified);  // on_verified: FnOnce(Principal, IdentityAttributes)
+#[identity_attributes]
+fn consume_attributes(caller: Principal, attributes: IdentityAttributes) { /* ... */ }
 
 // Added to your canister:
 // _internet_identity_sign_in_start  : () -> (blob)
@@ -95,8 +98,9 @@ pub enum Error {
 }
 ```
 
-`sign_in_start()` and `sign_in_finish(on_verified)` are the functions behind
-the two methods, for a canister that defines them itself.
+The function cannot be `async` or generic, and takes exactly these two
+arguments. `sign_in_start()` and `sign_in_finish(consume_attributes)` are the
+functions behind the two methods, for a canister that defines them itself.
 
 Resolution rules:
 

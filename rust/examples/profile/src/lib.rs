@@ -2,7 +2,7 @@
 
 use candid::Principal;
 use ic_cdk::query;
-use identity_attributes::IdentityAttributes;
+use identity_attributes::{identity_attributes, IdentityAttributes};
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
@@ -12,9 +12,10 @@ thread_local! {
         const { RefCell::new(BTreeMap::new()) };
 }
 
-identity_attributes::endpoints!(|caller: Principal, attributes: IdentityAttributes| {
+#[identity_attributes]
+fn consume_attributes(caller: Principal, attributes: IdentityAttributes) {
     PROFILES.with_borrow_mut(|profiles| profiles.insert(caller, attributes));
-});
+}
 
 #[query]
 fn get_profile(user_id: Principal) -> Option<IdentityAttributes> {
