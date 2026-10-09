@@ -4,12 +4,15 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - v*.*.*
+      - motoko-v*.*.*
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     environment: release
+    defaults:
+      run:
+        working-directory: motoko
 
     steps:
       - uses: actions/checkout@v6

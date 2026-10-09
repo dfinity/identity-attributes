@@ -1,0 +1,18 @@
+[package]
+name = "identity-attributes-macros"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "The #[identity_attributes] attribute of the identity-attributes crate."
+license = "Apache-2.0"
+repository = "https://github.com/dfinity/identity-attributes"
+keywords = ["internet-computer", "internet-identity", "attributes", "icp"]
+categories = ["api-bindings", "wasm"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = { version = "2", features = ["full"] }
