@@ -197,17 +197,19 @@ module {
       switch (parseSsoKey(key)) {
         case null {};
         case (?(domain, suffix)) {
-          switch value {
-            case (#Text v) {
-              if (Array.find<Text>(trustedSsoDomains, func d = d == domain) == null) {
-                if (untrustedSsoDomain == null) untrustedSsoDomain := ?domain
-              } else if (suffix == "name") {
-                ssoNameSources := Array.concat<(Text, Text, Text)>(ssoNameSources, [(domain, key, v)])
-              } else if (suffix == "email") {
-                ssoEmailSources := Array.concat<(Text, Text, Text)>(ssoEmailSources, [(domain, key, v)])
-              }
-            };
-            case _ {}
+          if (Array.find<Text>(trustedSsoDomains, func d = d == domain) == null) {
+            if (untrustedSsoDomain == null) untrustedSsoDomain := ?domain
+          } else {
+            switch value {
+              case (#Text v) {
+                if (suffix == "name") {
+                  ssoNameSources := Array.concat<(Text, Text, Text)>(ssoNameSources, [(domain, key, v)])
+                } else if (suffix == "email") {
+                  ssoEmailSources := Array.concat<(Text, Text, Text)>(ssoEmailSources, [(domain, key, v)])
+                }
+              };
+              case _ {}
+            }
           }
         }
       }

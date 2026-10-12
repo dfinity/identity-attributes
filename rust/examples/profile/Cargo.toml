@@ -1,0 +1,13 @@
+[package]
+name = "profile-example"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+candid = "0.10"
+ic-cdk = "0.20.1"
+identity-attributes = { path = "../.." }
