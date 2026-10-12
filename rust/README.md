@@ -46,7 +46,7 @@ thread_local! {
 }
 
 #[identity_attributes]
-fn consume_attributes(caller: Principal, attributes: IdentityAttributes) {
+fn on_verified(caller: Principal, attributes: IdentityAttributes) {
     PROFILES.with_borrow_mut(|profiles| profiles.insert(caller, attributes));
 }
 
@@ -72,7 +72,7 @@ The same as for the Motoko package: fetch a nonce from
 
 ```rust
 #[identity_attributes]
-fn consume_attributes(caller: Principal, attributes: IdentityAttributes) { /* ... */ }
+fn on_verified(caller: Principal, attributes: IdentityAttributes) { /* ... */ }
 
 // Added to your canister:
 // _internet_identity_sign_in_start  : () -> (blob)
@@ -99,7 +99,7 @@ pub enum Error {
 ```
 
 The function cannot be `async` or generic, and takes exactly these two
-arguments. `sign_in_start()` and `sign_in_finish(consume_attributes)` are the
+arguments. `sign_in_start()` and `sign_in_finish(on_verified)` are the
 functions behind the two methods, for a canister that defines them itself.
 
 Resolution rules:

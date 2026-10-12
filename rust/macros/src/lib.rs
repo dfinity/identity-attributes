@@ -19,7 +19,7 @@ use syn::{parse_macro_input, FnArg, ItemFn};
 /// use identity_attributes::{identity_attributes, IdentityAttributes};
 ///
 /// #[identity_attributes]
-/// fn consume_attributes(caller: Principal, attributes: IdentityAttributes) {
+/// fn on_verified(caller: Principal, attributes: IdentityAttributes) {
 ///     // store `attributes` for `caller` however the app needs
 /// }
 /// ```

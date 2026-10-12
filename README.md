@@ -18,7 +18,7 @@ Rust:
 
 ```rust
 #[identity_attributes]
-fn consume_attributes(caller: Principal, attributes: IdentityAttributes) {
+fn on_verified(caller: Principal, attributes: IdentityAttributes) {
     PROFILES.with_borrow_mut(|profiles| profiles.insert(caller, attributes));
 }
 ```
